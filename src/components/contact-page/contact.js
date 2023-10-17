@@ -2,6 +2,8 @@ import React from 'react'
 import { Card, Row, Col, Container } from 'react-bootstrap'
 import Map from './map'
 import ContactForm from './contact-form'
+import GetInTouch from './get-in-touch'
+import "../contact-page/contact.scss"
 
 const Contact = () => {
   return (
@@ -10,10 +12,12 @@ const Contact = () => {
             <Card>
                 <Card.Body>
                     <Row className='g-5'>
-                        <Col md={8}>
+                        <Col lg={7}>
                             <ContactForm/>
                         </Col>
-                        <Col md={4}></Col>
+                        <Col lg={5}>
+                        <GetInTouch/>
+                        </Col>
                     </Row>
                 </Card.Body>
             </Card>
