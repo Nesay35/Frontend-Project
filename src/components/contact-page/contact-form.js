@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { isInValid, isValid } from '../../helpers/functions/forms';
 import { createMessage } from '../../api/contact-message-services';
 import { swalAlert } from '../../helpers/functions/swal';
+import ButtonLoader from '../common/button-loader';
 
 const ContactForm = () => {
     const [loading, setLoading] = useState(false);
@@ -110,7 +111,7 @@ const ContactForm = () => {
                 </Col>
             </Row>
             <Button type="submit" variant="primary" disabled={!(formik.dirty && formik.isValid) || loading}>
-                {loading ? <Spinner animation="border" size="sm" /> : <FiSend />} Send
+                {loading ? <ButtonLoader/> : <FiSend />} Send
             </Button>
 
         </Form>
