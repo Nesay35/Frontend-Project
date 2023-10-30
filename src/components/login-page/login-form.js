@@ -11,11 +11,13 @@ import {login as loginSuccess} from '../../store/slices/auth-slice';
 import { useDispatch } from 'react-redux';
 import { AiFillLock } from 'react-icons/ai';
 import ButtonLoader from '../common/button-loader';
+import { useNavigate } from 'react-router-dom';
 
 
 const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const initialValues ={
         password: "123456Aa.",
@@ -34,9 +36,11 @@ const LoginForm = () => {
 
             //localStorage.setItem("token", token);
             setToLocalStorage("token", token)
+
             dispatch (loginSuccess(resp));
 
-            
+            navigate("/dashboard");
+
             
         } catch (err) {
             console.log(err)

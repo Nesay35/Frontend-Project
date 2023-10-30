@@ -8,6 +8,7 @@ import AboutPage from '../pages/about-page';
 import ContactPage from '../pages/contact-page';
 import LoginPage from '../pages/login-page';
 import DashboardPage from '../pages/dashboard/dashboard-page';
+import AdminManagementPage from '../pages/dashboard/admin-management-page';
 
 
 const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <DashboardPage/>
+                    },
+                    {
+                        path:"admin-management",
+                        element: <AdminManagementPage/>
                     }
                 ]
             }
