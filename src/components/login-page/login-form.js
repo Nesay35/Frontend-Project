@@ -6,18 +6,16 @@ import PasswordInput from '../common/password-input';
 import { isInValid, isValid } from '../../helpers/functions/forms';
 import { login } from '../../api/auth-service';
 import { swalAlert } from '../../helpers/functions/swal';
-import { useDispatch } from 'react-redux';
+import { setToLocalStorage } from '../../helpers/functions/encrypted-storage';
 import {login as loginSuccess} from '../../store/slices/auth-slice';
-import {AiFillLock} from "react-icons/ai"
+import { useDispatch } from 'react-redux';
+import { AiFillLock } from 'react-icons/ai';
 import ButtonLoader from '../common/button-loader';
-import { useNavigate } from 'react-router-dom';
 
-//import { setToLocalStorage } from '../../helpers/functions/encrypted-storage';
 
 const LoginForm = () => {
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
-    const navigate = useNavigate()
 
     const initialValues ={
         password: "123456Aa.",
@@ -31,17 +29,13 @@ const LoginForm = () => {
         setLoading(true);
         try {
             const resp = await login(values);
-            //const {token} = resp;
+            const {token} = resp;
             console.log(resp)
 
-            localStorage.setItem("token", resp.token)
+            //localStorage.setItem("token", token);
+            setToLocalStorage("token", token)
+            dispatch (loginSuccess(resp));
 
-            dispatch(loginSuccess(resp));
-
-            navigate("/dashboard");
-
-            //setToLocalStorage("token", resp.token)
-            
             
             
         } catch (err) {
