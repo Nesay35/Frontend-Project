@@ -9,6 +9,7 @@ import ContactPage from '../pages/contact-page';
 import LoginPage from '../pages/login-page';
 import DashboardPage from '../pages/dashboard/dashboard-page';
 import AdminManagementPage from '../pages/dashboard/admin-management-page';
+import PrivateRoute from './private-route';
 
 
 const router = createBrowserRouter([
@@ -45,11 +46,11 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <DashboardPage/>
+                        element: <PrivateRoute><DashboardPage/></PrivateRoute>
                     },
                     {
                         path:"admin-management",
-                        element: <AdminManagementPage/>
+                        element: <PrivateRoute><AdminManagementPage/></PrivateRoute>
                     }
                 ]
             }
