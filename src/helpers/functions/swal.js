@@ -5,6 +5,15 @@ export const swalAlert = (title, text="", icon="info") => {
         title,
         text,
         icon,
-        confirmButtonText: "Ok"
+        confirmButtonText: "Ok",
+    });
+};
+export const swalConfirm = (title, text) =>{
+    return Swal.fire({
+      title,
+      text,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
     })
-}
+  }

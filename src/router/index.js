@@ -11,7 +11,7 @@ import DashboardPage from '../pages/dashboard/dashboard-page';
 import AdminManagementPage from '../pages/dashboard/admin-management-page';
 import PrivateRoute from './private-route';
 import { config } from '../helpers/config';
-import UnauthorizedPage from '../pages/unauthorizedPage';
+import UnauthorizedPage from '../pages/unauthorized-page';
 
 
 const router = createBrowserRouter([
