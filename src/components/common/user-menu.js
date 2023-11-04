@@ -13,14 +13,18 @@ const UserMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
+
   const handleClose = () => setShowMenu(false);
   const handleOpen = () => setShowMenu(true);
+
   const handleMenuClick = (link) => {
     navigate(link);
     handleClose();
   };
+
   const handleLogout = async () => { 
     const resp = await swalConfirm("Are you sure to logout?", "");
+
     if(!resp.isConfirmed) return;
     dispatch(logout());
     removeFromLocalStorage("token");
@@ -69,8 +73,6 @@ const UserMenu = () => {
   );
 };
 export default UserMenu;
-
-
 
 
 

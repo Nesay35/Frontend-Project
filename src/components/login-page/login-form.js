@@ -13,7 +13,6 @@ import {AiFillLock} from "react-icons/ai"
 import ButtonLoader from '../common/button-loader';
 import { useNavigate } from 'react-router-dom';
 import userMenuData from "../../helpers/data/user-menu.json";
-
 const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
