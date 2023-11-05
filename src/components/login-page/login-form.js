@@ -8,15 +8,17 @@ import { login } from '../../api/auth-service';
 import { swalAlert } from '../../helpers/functions/swal';
 import { setToLocalStorage } from '../../helpers/functions/encrypted-storage';
 import { useDispatch } from 'react-redux';
-import { login as loginSuccess, setMenu } from '../../store/slices/auth-slice';
+import { login as loginSuccess } from '../../store/slices/auth-slice';
 import {AiFillLock} from "react-icons/ai"
 import ButtonLoader from '../common/button-loader';
 import { useNavigate } from 'react-router-dom';
-import userMenuData from "../../helpers/data/user-menu.json";
+
 const LoginForm = () => {
+
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    
     const initialValues ={
         password: "123456Aa.",
         username: "root"
@@ -27,14 +29,17 @@ const LoginForm = () => {
     });
     const onSubmit = async (values) => {
         setLoading(true);
+
         try {
             const resp = await login(values);
-            const { token, role } = resp;
+            const { token } = resp;
+
+
             setToLocalStorage("token", token)
             
             dispatch(loginSuccess(resp));
-            const userMenu = getMenuItems(role);
-            dispatch(setMenu(userMenu));
+            
+
             navigate("/dashboard");
             
         } catch (err) {
@@ -51,11 +56,7 @@ const LoginForm = () => {
         validationSchema,
         onSubmit
     })
-    const getMenuItems = (role) => {
-        if (!userMenuData || !role) return;
-        const menu = userMenuData[role.toLowerCase()];
-        return menu;
-    };
+   
   return (
     <Container>
         <Row className="justify-content-center">
