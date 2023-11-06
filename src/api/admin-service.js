@@ -12,3 +12,19 @@ export const getAdminsByPage = async (page=0, size=20, sort="name", type="ASC") 
     const data = await resp.data;
     return data;
 }
+
+export const createAdmin = async (payload) => {
+    const resp = await axios.post(`${baseURL}/admin/save`, payload, {
+        headers: getAuthHeader(),
+    });
+    const data = await resp.data;
+    return data;
+}
+
+export const deleteAdmin = async (id) => { 
+    const resp = await axios.delete(`${baseURL}/admin/delete/${id}`, {
+      headers: getAuthHeader(),
+    });
+    const data = await resp.data;
+    return data;
+   }

@@ -17,3 +17,11 @@ export const getUser = async () => {
     const data = await resp.data;
     return data;
 }
+
+export const deleteAdmin = async (id) => {
+    const resp = await axios.delete(`${baseURL}/admin/delete/${id}`, {
+        headers: getAuthHeader(),
+    });
+    const data = await resp.data;
+    return data;
+}

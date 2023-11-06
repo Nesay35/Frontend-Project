@@ -3,6 +3,7 @@ import AppRouter from './router'
 import { getUser } from './api/auth-service';
 import { useDispatch } from 'react-redux';
 import { login, logout } from './store/slices/auth-slice';
+import LoadingSpinner from './components/common/loading-spinner';
 
 
 const App = () => {
@@ -25,9 +26,10 @@ const App = () => {
 
   useEffect(() => {
     loadData();
-  }, [])
+    // eslint-disable-next-line
+  }, []);
 
-  return <>{loading ? <div>Loading...</div> : <AppRouter/>}</>
+  return <>{loading ? <LoadingSpinner loadingText={"Loading..."}/> : <AppRouter/>}</>
    
 }
 

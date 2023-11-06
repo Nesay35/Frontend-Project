@@ -11,7 +11,8 @@ import DashboardPage from '../pages/dashboard/dashboard-page';
 import AdminManagementPage from '../pages/dashboard/admin-management-page';
 import PrivateRoute from './private-route';
 import { config } from '../helpers/config';
-import UnauthorizedPage from '../pages/unauthorized-page';
+import Error404Page from '../pages/errors/error-404';
+import Error401Page from '../pages/errors/error-401';
 
 
 const router = createBrowserRouter([
@@ -43,10 +44,7 @@ const router = createBrowserRouter([
                 path: "login",
                 element:<LoginPage/>
             },
-            {
-                path: "unauthorized",
-                element:<UnauthorizedPage/>
-            },
+            
             {
                 path: "dashboard",
                 children: [
@@ -59,7 +57,15 @@ const router = createBrowserRouter([
                         element: <PrivateRoute roles={config.pageRoles.adminManagement}><AdminManagementPage/></PrivateRoute>
                     }
                 ]
-            }
+            },
+            {
+                path: "unauthorized",
+                element:<Error401Page/>
+            },
+            {
+                path: `*`,
+                element: <Error404Page />,
+            },
 
         ],
     },
