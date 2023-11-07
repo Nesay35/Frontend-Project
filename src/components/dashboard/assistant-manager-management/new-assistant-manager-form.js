@@ -12,12 +12,13 @@ import {
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
 import { useDispatch } from "react-redux";
-import { setOperation } from "../../../store/slices/misc-slice";
+import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createManager } from "../../../api/manager-service";
+import { createAssistantManager } from "../../../api/assistant-manager-service.";
 
-const NewManagerForm = () => {
+
+const NewAssistantManagerForm = () => {
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -63,10 +64,11 @@ const NewManagerForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createManager(values);
+      await createAssistantManager(values);
       formik.resetForm();
       dispatch(setOperation(null));
-      swalAlert("Manager was created successfully", "success");
+      dispatch(setListRefreshToken(Math.random()))
+      swalAlert("Assistant Manager was created successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = Object.values(err.response.data.validations)[0];
@@ -90,7 +92,7 @@ const NewManagerForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Manager</Card.Title>
+          <Card.Title>New Assistant Manager</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
               <Col>
@@ -286,4 +288,4 @@ const NewManagerForm = () => {
     </Container>
   );
 };
-export default NewManagerForm;
+export default NewAssistantManagerForm;

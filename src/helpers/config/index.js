@@ -27,6 +27,7 @@ export const config = {
     pageRoles: {
         dashboard: ["ADMIN","MANAGER","ASSISTANTMANAGER","TEACHER","STUDENT"],
         adminManagement: ["ADMIN"],
-        managerManagement: ["ADMIN"]
+        managerManagement: ["ADMIN"],
+        assistantManagerManagement: ["ADMIN", "MANAGER"]
     }
 }

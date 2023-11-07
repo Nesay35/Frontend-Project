@@ -4,8 +4,8 @@ import { deleteAdmin, getAdminsByPage } from "../../../api/admin-service";
 import { FaTimes } from "react-icons/fa";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useDispatch } from "react-redux";
-import { setOperation } from "../../../store/slices/misc-slice";
+import { useDispatch , useSelector} from "react-redux";
+import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
 
 
@@ -14,6 +14,7 @@ const AdminList = () => {
   const [loading, setLoading] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
   const dispatch = useDispatch();
+  const {listRefreshToken} = useSelector(state => state.misc);
   
   const [lazyState, setlazyState] = useState({
     first: 0,
@@ -48,6 +49,7 @@ const AdminList = () => {
      if(!resp.isConfirmed) return;
      try {
       await deleteAdmin(id);
+      dispatch(setListRefreshToken(Math.random()))
       swalAlert("Admin was deleted", "success");
      } catch (err) {
       console.log(err)
@@ -73,7 +75,7 @@ const AdminList = () => {
   useEffect(() => {
     loadData(lazyState.page);
     // eslint-disable-next-line
-  }, [lazyState]);
+  }, [lazyState, listRefreshToken]);
   return (
     <Container>
       <Card>

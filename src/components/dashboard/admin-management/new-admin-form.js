@@ -12,7 +12,7 @@ import {
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
 import { useDispatch } from "react-redux";
-import { setOperation } from "../../../store/slices/misc-slice";
+import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { createAdmin } from "../../../api/admin-service";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
@@ -64,6 +64,7 @@ const NewAdminForm = () => {
         try {
             await createAdmin(values);
             formik.resetForm();
+            dispatch(setListRefreshToken(Math.random()))
             dispatch(setOperation(null));
             swalAlert("Admin created successfully", "success");
         } catch (err) {
@@ -190,7 +191,7 @@ const NewAdminForm = () => {
                                 <FloatingLabel controlId="phone" label="Phone" className="mb-3">
                                     <Form.Control
                                         type="text"
-                                        placeholder=""
+                                        placeholder="XXX-XXX-XXXX"
                                         {...formik.getFieldProps("phoneNumber")}
                                         isValid={isValid(formik, "phoneNumber")}
                                         isInvalid={isInValid(formik, "phoneNumber")}
@@ -204,7 +205,7 @@ const NewAdminForm = () => {
                                 <FloatingLabel controlId="ssn" label="SSN" className="mb-3">
                                     <Form.Control
                                         type="text"
-                                        placeholder=""
+                                        placeholder="XXX-XX-XXXX"
                                         {...formik.getFieldProps("ssn")}
                                         isValid={isValid(formik, "ssn")}
                                         isInvalid={isInValid(formik, "ssn")}

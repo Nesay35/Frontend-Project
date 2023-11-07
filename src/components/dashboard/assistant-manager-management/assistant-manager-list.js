@@ -7,10 +7,10 @@ import { FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentRecord, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
-import { deleteManager, getManagersByPage } from "../../../api/manager-service";
+import { deleteAssistantManager, getAssistantManagersByPage } from "../../../api/assistant-manager-service.";
 
 
-const ManagerList = () => {
+const AssistantManagerList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
@@ -31,7 +31,7 @@ const ManagerList = () => {
 
   const loadData = async (page) => {
     try {
-      const resp = await getManagersByPage(page, lazyState.rows);
+      const resp = await getAssistantManagersByPage(page, lazyState.rows);
       setUsers(resp.content);
       setTotalRows(resp.totalElements);
     } catch (err) {
@@ -58,8 +58,8 @@ const ManagerList = () => {
     setLoading(true);
 
     try {
-      await deleteManager(id);
-      swalAlert("Manager was deleted", "success");
+      await deleteAssistantManager(id);
+      swalAlert("Assistant Manager was deleted", "success");
     } catch (err) {
       console.log(err)
     }
@@ -95,8 +95,8 @@ const ManagerList = () => {
       <Card>
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
-            <span>Manager List</span>
-            <Button onClick={handleNewUser}>New Manager</Button>
+            <span>Assistant Manager List</span>
+            <Button onClick={handleNewUser}>New Assistant Manager</Button>
           </Card.Title>
           <DataTable
             lazy
@@ -121,4 +121,4 @@ const ManagerList = () => {
     </Container>
   );
 };
-export default ManagerList;
+export default AssistantManagerList;

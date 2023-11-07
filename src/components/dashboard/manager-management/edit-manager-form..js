@@ -12,9 +12,10 @@ import {
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
 import { useDispatch, useSelector } from "react-redux";
-import { setOperation } from "../../../store/slices/misc-slice";
+import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
+import { updateManager } from "../../../api/manager-service";
 
 
 const EditManagerForm = () => {
@@ -24,16 +25,10 @@ const EditManagerForm = () => {
   const {currentRecord} = useSelector((state) => state.misc);
 
   const initialValues = {
-    birthDay: "",
-    birthPlace: "",
-    gender: "",
-    name: "",
+    ...currentRecord,
     password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    ssn: "",
-    surname: "",
-    username: "",
+    confirmPassword: ""
+    
   };
 
   const validationSchema = Yup.object({
@@ -65,10 +60,11 @@ const EditManagerForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      //await createManager(values);
+      await updateManager(values.userId, values);
       formik.resetForm();
+      dispatch(setListRefreshToken(Math.random()))
       dispatch(setOperation(null));
-      swalAlert("Manager was created successfully", "success");
+      swalAlert("Manager was update successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = Object.values(err.response.data.validations)[0];
@@ -188,7 +184,7 @@ const EditManagerForm = () => {
                 <FloatingLabel controlId="phone" label="Phone" className="mb-3">
                   <Form.Control
                     type="text"
-                    placeholder=""
+                    placeholder="XXX-XXX-XXXX"
                     {...formik.getFieldProps("phoneNumber")}
                     isValid={isValid(formik, "phoneNumber")}
                     isInvalid={isInValid(formik, "phoneNumber")}
@@ -202,7 +198,7 @@ const EditManagerForm = () => {
                 <FloatingLabel controlId="ssn" label="SSN" className="mb-3">
                   <Form.Control
                     type="text"
-                    placeholder=""
+                    placeholder="XXX-XX-XXXX"
                     {...formik.getFieldProps("ssn")}
                     isValid={isValid(formik, "ssn")}
                     isInvalid={isInValid(formik, "ssn")}

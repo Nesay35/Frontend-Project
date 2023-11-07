@@ -10,7 +10,7 @@
                 "link": "/dashboard/manager-management"
             },
             {
-                "title": "Assistan Manager Management",
+                "title": "Assistant Manager Management",
                 "link": "/dashboard/assistant-manager-management"
             },
             {
@@ -32,7 +32,7 @@
         ],
         "manager": [
             {
-                "title": "Assistan Manager Management",
+                "title": "Assistant Manager Management",
                 "link": "/dashboard/assistant-manager-management"
             },
             {
