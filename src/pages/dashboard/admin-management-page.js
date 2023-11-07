@@ -12,8 +12,7 @@ const AdminManagementPage = () => {
     <>
         <PageHeader title="Admin Management"/>
         <Spacer/>
-        {currentOperation==="new" && <NewAdminForm/>}
-        <Spacer/>
+        {currentOperation==="new" && <><NewAdminForm/><Spacer/></>}
         <AdminList/>
         <Spacer/>
     </>

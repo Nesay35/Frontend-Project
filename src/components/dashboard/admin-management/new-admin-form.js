@@ -274,7 +274,10 @@ const NewAdminForm = () => {
                                 <Button variant="warning" type="button" onClick={handleCancel} >
                                     Cancel
                                 </Button>
-                                <Button variant="secondary" type="submit" disabled={!(formik.dirty && formik.isValid) || loading}>
+                                <Button variant="secondary" type="submit" 
+                                disabled={!(formik.dirty && formik.isValid) || loading}
+                                className="ms-3"
+                                >
                                    {loading && <ButtonLoader/>} Create
                                 </Button>
                             </Col>

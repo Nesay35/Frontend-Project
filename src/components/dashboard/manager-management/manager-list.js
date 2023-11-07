@@ -1,15 +1,16 @@
+
 import React, { useEffect, useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
-import { deleteAdmin, getAdminsByPage } from "../../../api/admin-service";
-import { FaTimes } from "react-icons/fa";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setOperation } from "../../../store/slices/misc-slice";
+import { setCurrentRecord, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
+import { deleteManager, getManagersByPage } from "../../../api/manager-service";
 
 
-const AdminList = () => {
+const ManagerList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
@@ -22,15 +23,14 @@ const AdminList = () => {
     sortField: null,
     sortOrder: null,
 });
-  
+
   const onPage = (event) => {
     setlazyState(event);
     };
-    
+
   const loadData = async (page) => {
     try {
-      const resp = await getAdminsByPage(page, lazyState.rows);
-      console.log(resp);
+      const resp = await getManagersByPage(page, lazyState.rows);
       setUsers(resp.content);
       setTotalRows(resp.totalElements);
     } catch (err) {
@@ -39,48 +39,63 @@ const AdminList = () => {
       setLoading(false);
     }
   };
+
   const getFullName = (row) => {
     return `${row.name} ${row.surname}`;
   };
 
-  const handleDelete = async (id) => {
-     const resp = await swalConfirm("Are you sure to delete?");
-     if(!resp.isConfirmed) return;
-     try {
-      await deleteAdmin(id);
-      swalAlert("Admin was deleted", "success");
-     } catch (err) {
-      console.log(err)
-     }
-     finally{
-      setLoading(false);
-     }
+  const handleEdit = (row) => {
+    dispatch(setCurrentRecord(row));
+    dispatch(setOperation("edit"));
   }
+  
+
+
+  const handleDelete = async (id) => { 
+    const resp = await swalConfirm("Are you sure to delete?")  ;
+    if(!resp.isConfirmed) return;
+    setLoading(true);
+
+    try {
+      await deleteManager(id);
+      swalAlert("Manager was deleted", "success");
+    } catch (err) {
+      console.log(err)
+    }
+    finally{
+      setLoading(false);
+    }
+  }
+
   const getOperationButtons = (row) => {
     if (row.built_in) return null;
     return (
       <div>
-        <Button className="btn-link"  onClick={() => handleDelete(row.id)}>
+        <Button className="btn-link" onClick={()=> handleEdit(row)}>
+          <FaEdit />
+        </Button>
+        <Button className="btn-link" onClick={()=> handleDelete(row.id)}>
           <FaTimes />
         </Button>
       </div>
     );
   };
 
-  const handleNewUser = () => {
+  const handleNewUser = () => { 
     dispatch(setOperation("new"));
   }
   useEffect(() => {
     loadData(lazyState.page);
     // eslint-disable-next-line
   }, [lazyState]);
+
   return (
     <Container>
       <Card>
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
-            <span>Admin List</span>
-            <Button onClick={handleNewUser}>New Admin</Button>
+            <span>Manager List</span>
+            <Button onClick={handleNewUser}>New Manager</Button>
           </Card.Title>
           <DataTable
             lazy
@@ -93,7 +108,7 @@ const AdminList = () => {
             first={lazyState.first}
             onPage={onPage}
           >
-          <Column body={getFullName} header="Name"></Column>
+            <Column body={getFullName} header="Name"></Column>
             <Column field="gender" header="Gender"></Column>
             <Column field="phoneNumber" header="Phone Number"></Column>
             <Column field="ssn" header="SSN"></Column>
@@ -105,4 +120,4 @@ const AdminList = () => {
     </Container>
   );
 };
-export default AdminList
+export default ManagerList;
