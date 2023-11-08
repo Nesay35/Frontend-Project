@@ -15,9 +15,10 @@ import { useDispatch } from "react-redux";
 import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createManager } from "../../../api/manager-service";
+import { createTeacher } from "../../../api/teacher-service";
 
-const NewManagerForm = () => {
+
+const NewTeacherForm = () => {
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -63,11 +64,11 @@ const NewManagerForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createManager(values);
+      await createTeacher(values);
       formik.resetForm();
       dispatch(setOperation(null));
       dispatch(setListRefreshToken(Math.random()))
-      swalAlert("Manager was created successfully", "success");
+      swalAlert("Teacher was created successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = Object.values(err.response.data.validations)[0];
@@ -91,7 +92,7 @@ const NewManagerForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Manager</Card.Title>
+          <Card.Title>New Teacher</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
               <Col>
@@ -287,4 +288,4 @@ const NewManagerForm = () => {
     </Container>
   );
 };
-export default NewManagerForm;
+export default NewTeacherForm;

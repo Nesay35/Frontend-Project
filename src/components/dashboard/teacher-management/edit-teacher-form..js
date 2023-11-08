@@ -11,27 +11,26 @@ import {
 } from "react-bootstrap";
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createManager } from "../../../api/manager-service";
+import { updateTeacher } from "../../../api/teacher-service";
 
-const NewManagerForm = () => {
+
+
+
+const EditTeacherForm = () => {
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const {currentRecord} = useSelector((state) => state.misc);
+
   const initialValues = {
-    birthDay: "",
-    birthPlace: "",
-    gender: "",
-    name: "",
+    ...currentRecord,
     password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    ssn: "",
-    surname: "",
-    username: "",
+    confirmPassword: ""
+    
   };
 
   const validationSchema = Yup.object({
@@ -63,11 +62,11 @@ const NewManagerForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createManager(values);
+      await updateTeacher(values.userId, values);
       formik.resetForm();
-      dispatch(setOperation(null));
       dispatch(setListRefreshToken(Math.random()))
-      swalAlert("Manager was created successfully", "success");
+      dispatch(setOperation(null));
+      swalAlert("Teacher was update successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = Object.values(err.response.data.validations)[0];
@@ -91,7 +90,7 @@ const NewManagerForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Manager</Card.Title>
+          <Card.Title>Edit Teacher</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
               <Col>
@@ -277,7 +276,7 @@ const NewManagerForm = () => {
                   disabled={!(formik.dirty && formik.isValid) || loading}
                   className="ms-3"
                 >
-                  {loading && <ButtonLoader />} Create
+                  {loading && <ButtonLoader />} Update
                 </Button>
               </Col>
             </Row>
@@ -287,4 +286,4 @@ const NewManagerForm = () => {
     </Container>
   );
 };
-export default NewManagerForm;
+export default EditTeacherForm;

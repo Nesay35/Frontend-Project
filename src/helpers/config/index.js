@@ -28,6 +28,7 @@ export const config = {
         dashboard: ["ADMIN","MANAGER","ASSISTANTMANAGER","TEACHER","STUDENT"],
         adminManagement: ["ADMIN"],
         managerManagement: ["ADMIN"],
-        assistantManagerManagement: ["ADMIN", "MANAGER"]
+        assistantManagerManagement: ["ADMIN", "MANAGER"],
+        teacherManagement: ["ADMIN", "ASSISTANTMANAGER"]
     }
 }
