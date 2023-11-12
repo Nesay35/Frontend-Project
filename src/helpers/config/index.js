@@ -29,6 +29,12 @@ export const config = {
         adminManagement: ["ADMIN"],
         managerManagement: ["ADMIN"],
         assistantManagerManagement: ["ADMIN", "MANAGER"],
-        teacherManagement: ["ADMIN", "ASSISTANTMANAGER"]
-    }
+        teacherManagement: ["ADMIN", "ASSISTANTMANAGER"],
+        lessonManagement: ["ADMIN", "ASSISTANTMANAGER"]
+    },
+    educationTerms: [
+        {label: "Fall", key:"FALL_SEMESTER"},
+        {label: "Spring", key:"SPRING_SEMESTER"}
+        
+    ]
 }

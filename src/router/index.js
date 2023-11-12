@@ -16,6 +16,7 @@ import Error401Page from '../pages/errors/error-401';
 import ManagerManagementPage from '../pages/dashboard/manager-management-page';
 import AssistantManagerManagementPage from '../pages/dashboard/assistant-manager-management-page';
 import TeacherManagementPage from '../pages/dashboard/teacher-management-page';
+import LessonManagementPage from '../pages/dashboard/lesson-management-page';
 
 
 const router = createBrowserRouter([
@@ -69,7 +70,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path:"teacher-management",
-                        element: <PrivateRoute roles={config.pageRoles.teacherManagement}><TeacherManagementPage/></PrivateRoute>
+                        element: <PrivateRoute roles={config.pageRoles.lessonManagement}><TeacherManagementPage/></PrivateRoute>
+                    },
+                    {
+                        path:"lesson-management",
+                        element: <PrivateRoute roles={config.pageRoles.lessonManagement}><LessonManagementPage/></PrivateRoute>
                     },
                 ]
             },

@@ -13,7 +13,7 @@ const TeacherManagementPage = () => {
 
   return (
     <>
-        <PageHeader title="Teacher Manager Management"/>
+        <PageHeader title="Teacher Management"/>
         <Spacer/>
         {currentOperation==="new" && <><NewTeacherForm/><Spacer/></>}
         {currentOperation==="edit" && <><EditTeacherForm/><Spacer/></>}

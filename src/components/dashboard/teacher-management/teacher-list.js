@@ -96,7 +96,7 @@ const TeacherList = () => {
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
             <span>Teacher List</span>
-            <Button onClick={handleNewUser}>Teacher</Button>
+            <Button onClick={handleNewUser}>New Teacher</Button>
           </Card.Title>
           <DataTable
             lazy
