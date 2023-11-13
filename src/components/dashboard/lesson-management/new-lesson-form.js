@@ -16,32 +16,27 @@ import { setListRefreshToken, setOperation } from "../../../store/slices/misc-sl
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
 import { config } from "../../../helpers/config";
-import { createEducationTerm } from "../../../api/education-term-service";
-
-
-const NewEducationTermForm = () => {
+import { createLesson } from "../../../api/lesson-service";
+const NewLessonForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const initialValues = {
-    endDate: "",
-    lastRegistrationDate: "",
-    startDate: "",
-    term: "",
+    lessonName: "",
+    creditScore: "",
+    compulsory: "",
   };
   const validationSchema = Yup.object({
-    term: Yup.string().required("Required").oneOf(config.educationTerms.map( (item)=> item.key ), "Invalid term"),
-    startDate: Yup.date().required("Required"),
-    endDate: Yup.date().required("Required").min(Yup.ref("startDate"), "Must later than start date"),
-    lastRegistrationDate: Yup.date().required("Required").max(Yup.ref("startDate"), "Must earlier than start date"),
+    lessonName: Yup.string().required("Required"),
+    creditScore: Yup.number().required("Required"),
   });
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createEducationTerm(values);
+      await createLesson(values);
       formik.resetForm();
       dispatch(setListRefreshToken(Math.random()))
       dispatch(setOperation(null));
-      swalAlert("Term was created successfully", "success");
+      swalAlert("LEsson was created successfully", "success");
     } catch (err) {
      
       let errMsg = "";
@@ -69,83 +64,54 @@ const NewEducationTermForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Term</Card.Title>
+          <Card.Title>New Lesson</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
               <Col>
                 <FloatingLabel
-                  controlId="term"
-                  label="Term"
+                  controlId="lessonName"
+                  label="Name"
                   className="mb-3"
                 >
-                  <Form.Select aria-label="Default select example" 
-                  {...formik.getFieldProps("term")}
-                    isValid={isValid(formik, "term")}
-                    isInvalid={isInValid(formik, "term")}>
-                    <option>Select Term</option>
-                    {
-                      config.educationTerms.map( (term)=> <option value={term.key}>{term.label}</option>)
-                    }
-                  </Form.Select>
+                  <Form.Control
+                    type="text"
+                    placeholder=""
+                    {...formik.getFieldProps("lessonName")}
+                    isValid={isValid(formik, "lessonName")}
+                    isInvalid={isInValid(formik, "lessonName")}
+                  />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.term}
+                    {formik.errors.lessonName}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Col>
               <Col>
                 <FloatingLabel
-                  controlId="startDate"
-                  label="Start Date"
+                  controlId="creditScore"
+                  label="Credit Score"
                   className="mb-3"
                 >
                   <Form.Control
-                    type="date"
+                    type="number"
                     placeholder=""
-                    {...formik.getFieldProps("startDate")}
-                    isValid={isValid(formik, "startDate")}
-                    isInvalid={isInValid(formik, "startDate")}
+                    {...formik.getFieldProps("creditScore")}
+                    isValid={isValid(formik, "creditScore")}
+                    isInvalid={isInValid(formik, "creditScore")}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.startDate}
+                    {formik.errors.creditScore}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Col>
               <Col>
-                <FloatingLabel
-                  controlId="endDate"
-                  label="End Date"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="date"
-                    placeholder=""
-                    {...formik.getFieldProps("endDate")}
-                    isValid={isValid(formik, "endDate")}
-                    isInvalid={isInValid(formik, "endDate")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.endDate}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
+                <Form.Check 
+                  type="checkbox"
+                  id="compulsory"
+                  label="Compulsory"
+                  {...formik.getFieldProps("compulsory")}
+                />
               </Col>
-              <Col>
-                <FloatingLabel
-                  controlId="lastRegistrationDate"
-                  label="Last Registration Date"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="date"
-                    placeholder=""
-                    {...formik.getFieldProps("lastRegistrationDate")}
-                    isValid={isValid(formik, "lastRegistrationDate")}
-                    isInvalid={isInValid(formik, "lastRegistrationDate")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.lastRegistrationDate}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
+              
             </Row>
             <Row>
               <Col className="text-end">
@@ -168,4 +134,4 @@ const NewEducationTermForm = () => {
     </Container>
   );
 };
-export default NewEducationTermForm;
+export default NewLessonForm;

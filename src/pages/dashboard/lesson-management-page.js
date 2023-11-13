@@ -5,6 +5,7 @@ import { Tab, Tabs } from "react-bootstrap";
 import EducationTermList from "../../components/dashboard/lesson-management/education-term-list";
 import NewEducationTermForm from "../../components/dashboard/lesson-management/new-education-term-form";
 import { useSelector } from "react-redux";
+import LessonList from "../../components/dashboard/lesson-management/lesson-list";
 
 const LessonManagementPage = () => {
     const [key, setKey] = useState('terms');
@@ -26,7 +27,7 @@ const LessonManagementPage = () => {
                 </Tab>
                 <Tab eventKey="lessons" title="Lessons">
                     <Spacer height={30} />
-                    
+                    <LessonList/>
                 </Tab>
                 <Tab eventKey="programs" title="Lesson Programs">
                     Tab content for Contact

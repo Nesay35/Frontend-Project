@@ -23,7 +23,7 @@ export const createEducationTerm = async (payload) => {
  }
 
  export const deleteEducationTerm = async (id) => { 
-  const resp = await axios.delete(`${baseURL}/educationTerms/delete/${id}`, {
+  const resp = await axios.delete(`${baseURL}/educationTerms/${id}`, {
     headers: getAuthHeader(),
   });
   const data = await resp.data;

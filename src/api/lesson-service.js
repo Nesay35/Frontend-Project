@@ -5,7 +5,7 @@ import { getAuthHeader } from "./auth-header";
 
 const baseURL = config.api.baseUrl;
 
-export const getLessonsByPage = async (page=0, size=20, sort="name", type="ASC") => {
+export const getLessonsByPage = async (page=0, size=20, sort="lessonName", type="ASC") => {
   const resp = await axios.get(`${baseURL}/lessons/search?page=${page}&size=${size}&sort=${sort}&type=${type}`, {
     headers: getAuthHeader(),
   });
