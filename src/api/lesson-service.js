@@ -13,6 +13,14 @@ export const getLessonsByPage = async (page=0, size=20, sort="lessonName", type=
   return data;
 };
 
+export const getAllLessons = async () => { 
+  const resp = await axios.get(`${baseURL}/lessons/getAll`, {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }
+
 export const createLesson = async (payload) => { 
   const resp = await axios.post(`${baseURL}/lessons/save`, payload, {
     headers: getAuthHeader(),

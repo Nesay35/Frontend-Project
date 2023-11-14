@@ -14,6 +14,14 @@ export const getEducationTermsByPage = async (page=0, size=20, sort="startDate",
   return data;
 };
 
+export const getAllEducationTerms = async () => { 
+  const resp = await axios.get(`${baseURL}/educationTerms/getAll`, {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }
+
 export const createEducationTerm = async (payload) => { 
   const resp = await axios.post(`${baseURL}/educationTerms`, payload, {
     headers: getAuthHeader(),

@@ -6,10 +6,10 @@ import { FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
-import { deleteLesson, getLessonsByPage } from "../../../api/lesson-service";
+import { deleteLessonProgram, getLessonProgramsByPage } from "../../../api/lesson-program-service";
 
 
-const LessonList = () => {
+const LessonAssignment = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
@@ -28,7 +28,7 @@ const LessonList = () => {
     };
   const loadData = async (page) => {
     try {
-      const resp = await getLessonsByPage(page, lazyState.rows);
+      const resp = await getLessonProgramsByPage(page, lazyState.rows);
       setList(resp.content);
       setTotalRows(resp.totalElements);
     } catch (err) {
@@ -42,9 +42,9 @@ const LessonList = () => {
     if(!resp.isConfirmed) return;
     setLoading(true);
     try {
-      await deleteLesson(id);
+      await deleteLessonProgram(id);
       dispatch(setListRefreshToken(Math.random()));
-      swalAlert("Lesson was deleted", "success");
+      swalAlert("Program was deleted", "success");
     } catch (err) {
       console.log(err)
     }
@@ -56,12 +56,18 @@ const LessonList = () => {
     if (row.built_in) return null;
     return (
       <div>
-        <Button className="btn-link" onClick={()=> handleDelete(row.lessonId)}>
+        <Button className="btn-link" onClick={()=> handleDelete(row.lessonProgramId)}>
           <FaTimes />
         </Button>
       </div>
     );
   };
+
+  const getLessonNames = (row) => {
+    return row.lessonName.map(item => item.lessonName).join("-")
+  }
+  
+
   const handleNewRecord = () => { 
     dispatch(setOperation("new"));
   }
@@ -74,12 +80,12 @@ const LessonList = () => {
       <Card>
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
-            <span>Lesson List</span>
-            <Button onClick={handleNewRecord}>New Lesson</Button>
+            <span>Lesson Program List</span>
+            <Button onClick={handleNewRecord}>New Program</Button>
           </Card.Title>
           <DataTable
             lazy
-            dataKey="lessonId"
+            dataKey="lessonProgramId"
             value={list}
             paginator
             rows={lazyState.rows}
@@ -88,9 +94,10 @@ const LessonList = () => {
             first={lazyState.first}
             onPage={onPage}
           >
-            <Column field="lessonName" header="Name"></Column>
-            <Column field="creditScore" header="Credit"></Column>
-            <Column field="compulsory" header="Compulsory"></Column>
+            <Column body={getLessonNames} header="lessons"></Column>
+            <Column field="day" header="day"></Column>
+            <Column field="startTime" header="Start Time"></Column>
+            <Column field="stopTime" header="Stop Time"></Column>
             <Column body={getOperationButtons} headerStyle={{width: "120px"}}></Column>
           </DataTable>
         </Card.Body>
@@ -98,4 +105,4 @@ const LessonList = () => {
     </Container>
   );
 };
-export default LessonList;
+export default LessonAssignment;

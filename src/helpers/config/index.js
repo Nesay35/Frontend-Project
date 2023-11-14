@@ -36,5 +36,7 @@ export const config = {
         {label: "Fall", key:"FALL_SEMESTER"},
         {label: "Spring", key:"SPRING_SEMESTER"}
         
-    ]
+    ],
+    days: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+
 }
