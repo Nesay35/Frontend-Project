@@ -1,105 +1,98 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container } from "react-bootstrap";
+import { Button, Card, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { FaTimes } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
-import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
-import { deleteLessonProgram, getLessonProgramsByPage } from "../../../api/lesson-program-service";
+
+
+import { getUnassignedPrograms } from "../../../api/lesson-program-service";
+import { useSelector } from "react-redux";
+import { getAllTeachers } from "../../../api/teacher-service";
+
 
 
 const LessonAssignment = () => {
   const [list, setList] = useState([]);
+  const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalRows, setTotalRows] = useState(0);
-  const dispatch = useDispatch();
+  
+ 
   const { listRefreshToken } = useSelector(state=> state.misc);
   
-  const [lazyState, setlazyState] = useState({
-    first: 0,
-    rows: 10,
-    page: 0,
-    sortField: null,
-    sortOrder: null,
-});
-  const onPage = (event) => {
-    setlazyState(event);
-    };
-  const loadData = async (page) => {
+  
+  
+  const loadPrograms = async () => {
     try {
-      const resp = await getLessonProgramsByPage(page, lazyState.rows);
-      setList(resp.content);
-      setTotalRows(resp.totalElements);
+      const data = await getUnassignedPrograms();
+      setList(data);
+      
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
     }
   };
-  const handleDelete = async (id) => { 
-    const resp = await swalConfirm("Are you sure to delete?")  ;
-    if(!resp.isConfirmed) return;
-    setLoading(true);
+
+  const loadTeachers = async () => {
     try {
-      await deleteLessonProgram(id);
-      dispatch(setListRefreshToken(Math.random()));
-      swalAlert("Program was deleted", "success");
+      const data = await getAllTeachers();
+      setTeachers(data);
+      
     } catch (err) {
-      console.log(err)
-    }
-    finally{
+      console.log(err);
+    } finally {
       setLoading(false);
     }
-  }
-  const getOperationButtons = (row) => {
-    if (row.built_in) return null;
-    return (
-      <div>
-        <Button className="btn-link" onClick={()=> handleDelete(row.lessonProgramId)}>
-          <FaTimes />
-        </Button>
-      </div>
-    );
   };
 
   const getLessonNames = (row) => {
     return row.lessonName.map(item => item.lessonName).join("-")
   }
   
-
-  const handleNewRecord = () => { 
-    dispatch(setOperation("new"));
-  }
   useEffect(() => {
-    loadData(lazyState.page);
+    loadPrograms();
+    loadTeachers();
     // eslint-disable-next-line
-  }, [lazyState, listRefreshToken]);
+  }, [listRefreshToken]);
   return (
     <Container>
       <Card>
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
             <span>Lesson Program List</span>
-            <Button onClick={handleNewRecord}>New Program</Button>
           </Card.Title>
           <DataTable
             lazy
             dataKey="lessonProgramId"
             value={list}
-            paginator
-            rows={lazyState.rows}
-            totalRecords={totalRows}
             loading={loading}
-            first={lazyState.first}
-            onPage={onPage}
+           
           >
             <Column body={getLessonNames} header="lessons"></Column>
             <Column field="day" header="day"></Column>
             <Column field="startTime" header="Start Time"></Column>
             <Column field="stopTime" header="Stop Time"></Column>
-            <Column body={getOperationButtons} headerStyle={{width: "120px"}}></Column>
           </DataTable>
+
+          <Row>
+            <Col md={10}>
+            <FloatingLabel
+                  controlId="term"
+                  label="Term"
+                  className="mb-3"
+                >
+                  <Form.Select aria-label="Default select example" >
+                  
+                    <option>Select Teacher</option>
+                    {teachers.map( item => <option value={item.userId}>{item.name} {item.surname}</option> )}
+                  </Form.Select>
+                 
+                </FloatingLabel>
+            </Col>
+            <Col md={2}>
+                <Button variant="success" size="lg">Assign</Button>
+            </Col>
+          </Row>
+
         </Card.Body>
       </Card>
     </Container>

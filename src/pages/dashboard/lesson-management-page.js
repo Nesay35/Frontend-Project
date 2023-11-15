@@ -40,6 +40,7 @@ const LessonManagementPage = () => {
                 <LessonProgramList/>
                 <Spacer height={30} />
                 <LessonAssignment/>
+                <Spacer/>
                 </Tab>
             </Tabs>
         </>
