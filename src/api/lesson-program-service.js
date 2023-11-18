@@ -36,3 +36,12 @@ export const createLessonProgram = async (payload) => {
   const data = await resp.data;
   return data;
  }
+
+ export const getAllLessonPrograms = async () => { 
+    const resp = await axios.get(`${baseURL}/lessonPrograms/getAll`, {
+      headers: getAuthHeader(),
+    });
+    const data = await resp.data;
+    return data;
+   }
+

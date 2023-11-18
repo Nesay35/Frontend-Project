@@ -45,3 +45,11 @@ export const createTeacher = async (payload) => {
   const data = await resp.data;
   return data;
  }
+
+ export const chooseLesson = async (payload) => { 
+  const resp = await axios.post(`${baseURL}/teachers/chooseLesson`, payload, {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }

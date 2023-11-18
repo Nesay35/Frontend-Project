@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -16,12 +16,14 @@ import { setListRefreshToken, setOperation } from "../../../store/slices/misc-sl
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
 import { createTeacher } from "../../../api/teacher-service";
+import { MultiSelect } from "primereact/multiselect";
+import { getAllLessonPrograms } from "../../../api/lesson-program-service";
 
 
 const NewTeacherForm = () => {
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [lessonPrograms, setLessonPrograms] = useState([])
   const initialValues = {
     birthDay: "",
     birthPlace: "",
@@ -33,8 +35,10 @@ const NewTeacherForm = () => {
     ssn: "",
     surname: "",
     username: "",
+    email: "",
+    isAdvisorTeacher: false,
+    lessonsIdList: []
   };
-
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     surname: Yup.string().required("Required"),
@@ -49,7 +53,9 @@ const NewTeacherForm = () => {
     ssn: Yup.string()
       .required("Required")
       .matches(/\d{3}-\d{2}-\d{4}/g, "Invalid ssn"),
+    email: Yup.string().email("Invalid email").required("Required"),
     username: Yup.string().required("Required"),
+    lessonsIdList: Yup.array().required("Required"),
     password: Yup.string()
       .required("Required")
       .min(8, "At least 8 characters")
@@ -60,7 +66,6 @@ const NewTeacherForm = () => {
       .required("Required")
       .oneOf([Yup.ref("password")], "Passwords must match"),
   });
-
   const onSubmit = async (values) => {
     setLoading(true);
     try {
@@ -71,13 +76,12 @@ const NewTeacherForm = () => {
       swalAlert("Teacher was created successfully", "success");
     } catch (err) {
       console.log(err);
-      const errMsg = Object.values(err.response.data.validations)[0];
+      const errMsg = err.response.data.message;
       swalAlert(errMsg, "error");
     } finally {
       setLoading(false);
     }
   };
-
   const handleCancel = () => {
     formik.resetForm();
     dispatch(setOperation(null));
@@ -87,6 +91,24 @@ const NewTeacherForm = () => {
     validationSchema,
     onSubmit,
   });
+  const loadLessonPrograms = async () => { 
+    try {
+        const data = await getAllLessonPrograms();
+
+        const arr = data.map((program) => ({
+          lessonProgramId: program.lessonProgramId,
+          lessonName: program.lessonName.map((item) => item.lessonName).join("-")
+        }))
+        setLessonPrograms(arr);
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  useEffect(() => {
+    loadLessonPrograms()
+    // eslint-disable-next-line
+  }, [])
   
   return (
     <Container>
@@ -185,10 +207,10 @@ const NewTeacherForm = () => {
                 </FloatingLabel>
               </Col>
               <Col>
-                <FloatingLabel controlId="phone" label="Phone" className="mb-3">
+                <FloatingLabel controlId="phone" label="Phone (XXX-XXX-XXXX)" className="mb-3">
                   <Form.Control
                     type="text"
-                    placeholder="XXX-XXX-XXXX"
+                    placeholder="Phone (XXX-XXX-XXXX)"
                     {...formik.getFieldProps("phoneNumber")}
                     isValid={isValid(formik, "phoneNumber")}
                     isInvalid={isInValid(formik, "phoneNumber")}
@@ -199,10 +221,24 @@ const NewTeacherForm = () => {
                 </FloatingLabel>
               </Col>
               <Col>
-                <FloatingLabel controlId="ssn" label="SSN" className="mb-3">
+                <FloatingLabel controlId="email" label="Email" className="mb-3">
+                  <Form.Control
+                    type="email"
+                    placeholder=""
+                    {...formik.getFieldProps("email")}
+                    isValid={isValid(formik, "email")}
+                    isInvalid={isInValid(formik, "email")}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.email}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel controlId="ssn" label="SSN (XXX-XX-XXXX)" className="mb-3">
                   <Form.Control
                     type="text"
-                    placeholder="XXX-XX-XXXX"
+                    placeholder="SSN (XXX-XX-XXXX)"
                     {...formik.getFieldProps("ssn")}
                     isValid={isValid(formik, "ssn")}
                     isInvalid={isInValid(formik, "ssn")}
@@ -211,6 +247,27 @@ const NewTeacherForm = () => {
                     {formik.errors.ssn}
                   </Form.Control.Feedback>
                 </FloatingLabel>
+              </Col>
+              <Col>
+                  <Form.Check
+                    id="isAdvisor"
+                    type="checkbox"
+                    label="Is Advisor Teacher"
+                    {...formik.getFieldProps("isAdvisorTeacher")}
+                  />
+              </Col>   
+              <Col>
+                <MultiSelect
+                    value={formik.values.lessonsIdList}
+                    onChange={(e) => formik.setFieldValue("lessonsIdList", e.value)}
+                    options={lessonPrograms}
+                    display="chip"
+                    placeholder="Select Lessons"
+                    className="w-100"
+                    optionValue="lessonProgramId"
+                    optionLabel="lessonName"
+                  
+                  />
               </Col>
               <Col>
                 <FloatingLabel
