@@ -21,14 +21,21 @@ export const createTeacher = async (payload) => {
   return data;
  }
 
- export const getAllTeachers = async (payload) => { 
-  const resp = await axios.post(`${baseURL}/teachers/getAll`, {
+ export const getAllTeachers = async () => { 
+  const resp = await axios.get(`${baseURL}/teachers/getAll`, {
     headers: getAuthHeader(),
   });
   const data = await resp.data;
   return data;
  }
 
+ export const getTeacherById = async (id) => { 
+  const resp = await axios.get(`${baseURL}/teachers/getSavedTeacherById/${id}`, {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }
 
  export const deleteTeacher = async (id) => { 
   const resp = await axios.delete(`${baseURL}/teachers/delete/${id}`, {
