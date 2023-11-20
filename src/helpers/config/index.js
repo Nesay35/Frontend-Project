@@ -30,6 +30,7 @@ export const config = {
         managerManagement: ["ADMIN"],
         assistantManagerManagement: ["ADMIN", "MANAGER"],
         teacherManagement: ["ADMIN", "ASSISTANTMANAGER"],
+        studentManagement: ["ADMIN", "ASSISTANTMANAGER"],
         lessonManagement: ["ADMIN", "ASSISTANTMANAGER"]
     },
     educationTerms: [
