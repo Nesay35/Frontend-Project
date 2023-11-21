@@ -18,6 +18,7 @@ import AssistantManagerManagementPage from '../pages/dashboard/assistant-manager
 import TeacherManagementPage from '../pages/dashboard/teacher-management-page';
 import LessonManagementPage from '../pages/dashboard/lesson-management-page';
 import StudentManagementPage from '../pages/dashboard/student-management-page';
+import StudentInfoManagementPage from '../pages/dashboard/student-info-management-page';
 
 
 const router = createBrowserRouter([
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
                     {
                         path:"student-management",
                         element: <PrivateRoute roles={config.pageRoles.studentManagement}><StudentManagementPage/></PrivateRoute>
+                    },
+                    {
+                        path:"student-info-management",
+                        element: <PrivateRoute roles={config.pageRoles.studentInfoManagement}><StudentInfoManagementPage/></PrivateRoute>
                     },
                 ]
             },

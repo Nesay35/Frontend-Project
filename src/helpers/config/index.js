@@ -31,7 +31,8 @@ export const config = {
         assistantManagerManagement: ["ADMIN", "MANAGER"],
         teacherManagement: ["ADMIN", "ASSISTANTMANAGER"],
         studentManagement: ["ADMIN", "ASSISTANTMANAGER"],
-        lessonManagement: ["ADMIN", "ASSISTANTMANAGER"]
+        lessonManagement: ["ADMIN", "ASSISTANTMANAGER"],
+        studentInfoManagement: ["TEACHER"]
     },
     educationTerms: [
         {label: "Fall", key:"FALL_SEMESTER"},

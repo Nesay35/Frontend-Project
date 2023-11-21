@@ -4,6 +4,7 @@ import Spacer from '../../components/common/spacer'
 import { useSelector } from 'react-redux'
 import StudentList from '../../components/dashboard/student-management/student-list';
 import NewStudentForm from '../../components/dashboard/student-management/new-student-form';
+import EditStudentForm from '../../components/dashboard/student-management/edit-student-form';
 
 
 
@@ -15,7 +16,7 @@ const StudentManagementPage = () => {
         <PageHeader title="Student Management"/>
         <Spacer/>
         {currentOperation==="new" && <><NewStudentForm/><Spacer/></>}
-        {/*currentOperation==="edit" && <><EditTeacherForm/><Spacer/></>*/}
+        {currentOperation==="edit" && <><EditStudentForm/><Spacer/></>}
         <StudentList/>
         <Spacer/>
     </>

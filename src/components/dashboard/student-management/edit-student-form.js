@@ -11,34 +11,26 @@ import {
 } from "react-bootstrap";
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createStudent } from "../../../api/student-service";
 import { getAllAdvisorTeachers } from "../../../api/advisor-teacher-service";
+import { updateStudent } from "../../../api/student-service";
 
 
 
-const NewStudentForm = () => {
+const EditStudentForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [advisorTeachers, setAdvisorTeachers] = useState([])
+  const {currentRecord} = useSelector(state=>state.misc)
+
   const initialValues = {
-    birthDay: "",
-    birthPlace: "",
-    gender: "",
-    name: "",
+    ...currentRecord,
     password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    ssn: "",
-    surname: "",
-    username: "",
-    email: "",
-    advisorTeacherId: "",
-    fatherName:"",
-    motherName:""
+    confirmPassword: ""
+  
   };
 
   const validationSchema = Yup.object({
@@ -74,11 +66,11 @@ const NewStudentForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createStudent(values);
+      await updateStudent(values.userId, values);
       formik.resetForm();
       dispatch(setOperation(null));
       dispatch(setListRefreshToken(Math.random()))
-      swalAlert("Student was created successfully", "success");
+      swalAlert("Student was updated successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = err.response.data.message;
@@ -95,6 +87,7 @@ const NewStudentForm = () => {
     initialValues,
     validationSchema,
     onSubmit,
+    enableReinitialize: true
   });
 
   const loadAdvisorTeachers = async () => { 
@@ -116,7 +109,7 @@ const NewStudentForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Student</Card.Title>
+          <Card.Title>Edit Student</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
               <Col>
@@ -380,4 +373,4 @@ const NewStudentForm = () => {
     </Container>
   );
 };
-export default NewStudentForm;
+export default EditStudentForm;
