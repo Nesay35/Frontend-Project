@@ -12,73 +12,56 @@ import {
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
 import { useDispatch } from "react-redux";
-import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
+import {
+  setListRefreshToken,
+  setOperation,
+} from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createStudent } from "../../../api/student-service";
-import { getAllAdvisorTeachers } from "../../../api/advisor-teacher-service";
+import { createStudentInfo } from "../../../api/student-info-service";
+import { getAllLessonProgramsByTeacher } from "../../../api/lesson-program-service";
+import { getAllStudents } from "../../../api/student-service";
+import { getAllEducationTerms } from "../../../api/education-term-service";
 
 
-
-const NewStudentForm = () => {
+const NewStudentInfoForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [advisorTeachers, setAdvisorTeachers] = useState([])
+  const [lessons, setLessons] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [educationTerms, setEducationTerms] = useState([])
   const initialValues = {
-    birthDay: "",
-    birthPlace: "",
-    gender: "",
-    name: "",
-    password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    ssn: "",
-    surname: "",
-    username: "",
-    email: "",
-    advisorTeacherId: "",
-    fatherName:"",
-    motherName:""
+    absentee: "",
+    educationTermId: "",
+    finalExam: "",
+    infoNote: "",
+    lessonId: "",
+    midtermExam: "",
+    studentId: "",
   };
-
   const validationSchema = Yup.object({
-    name: Yup.string().required("Required"),
-    surname: Yup.string().required("Required"),
-    gender: Yup.string()
-      .required("Required")
-      .oneOf(["MALE", "FEMALE"], "Invalid gender"),
-    birthDay: Yup.date().required("Required"),
-    birthPlace: Yup.string().required("Required"),
-    phoneNumber: Yup.string()
-      .required("Required")
-      .matches(/\d{3}-\d{3}-\d{4}/g, "Invalid phone number"),
-    ssn: Yup.string()
-      .required("Required")
-      .matches(/\d{3}-\d{2}-\d{4}/g, "Invalid ssn"),
-    email: Yup.string().email("Invalid email").required("Required"),
-    username: Yup.string().required("Required"),
-    fatherName: Yup.string().required("Required"),
-    motherName: Yup.string().required("Required"),
-    advisorTeacherId: Yup.number().required("Required"),
-    password: Yup.string()
-      .required("Required")
-      .min(8, "At least 8 characters")
-      .matches(/[a-z]+/g, "One lowercase char")
-      .matches(/[A-Z]+/g, "One uppercase char")
-      .matches(/[\d+]+/g, "One number"),
-    confirmPassword: Yup.string()
-      .required("Required")
-      .oneOf([Yup.ref("password")], "Passwords must match"),
+    absentee: Yup.number().required("Required"),
+    educationTermId: Yup.number().required("Required"),
+    finalExam: Yup.number()
+      .min(0, "Min 0")
+      .max(100, "Max 100")
+      .required("Required"),
+    infoNote: Yup.string().min(10, "At least 10 characters").required("Required"),
+    lessonId: Yup.number().required("Required"),
+    midtermExam: Yup.number()
+      .min(0, "Min 0")
+      .max(100, "Max 100")
+      .required("Required"),
+    studentId: Yup.number().required("Required"),
   });
-
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createStudent(values);
+      await createStudentInfo(values);
       formik.resetForm();
       dispatch(setOperation(null));
-      dispatch(setListRefreshToken(Math.random()))
-      swalAlert("Student was created successfully", "success");
+      dispatch(setListRefreshToken(Math.random()));
+      swalAlert("Student info was created successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = err.response.data.message;
@@ -96,265 +79,169 @@ const NewStudentForm = () => {
     validationSchema,
     onSubmit,
   });
-
-  const loadAdvisorTeachers = async () => { 
+  const loadLessons = async () => {
     try {
-        const data = await getAllAdvisorTeachers();
-    
-        setAdvisorTeachers(data);
-
+      const data = await getAllLessonProgramsByTeacher();
+      const arr = [];
+      data.forEach((day) => {
+        day.lessonName.forEach((item) => {
+          arr.push({ id: item.lessonId, label: item.lessonName });
+        });
+      });
+      setLessons(arr);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
+  const loadStudents = async () => {
+    try {
+      const data = await getAllStudents();
+      setStudents(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const loadEducationTerms = async () => {
+    try {
+      const data = await getAllEducationTerms();
+      setEducationTerms(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
-    loadAdvisorTeachers()
+    loadLessons();
+    loadStudents();
+    loadEducationTerms();
     // eslint-disable-next-line
-  }, [])
-  
+  }, []);
   return (
     <Container>
       <Card>
         <Card.Body>
           <Card.Title>New Student</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
-            <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+            <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3">
               <Col>
-                <FloatingLabel
-                  controlId="firstName"
-                  label="First name"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    {...formik.getFieldProps("name")}
-                    isValid={isValid(formik, "name")}
-                    isInvalid={isInValid(formik, "name")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.name}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel
-                  controlId="lastName"
-                  label="Last name"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    {...formik.getFieldProps("surname")}
-                    isValid={isValid(formik, "surname")}
-                    isInvalid={isInValid(formik, "surname")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.surname}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel controlId="floatingSelect" label="Gender">
+                <FloatingLabel controlId="lesson" label="Lesson">
                   <Form.Select
-                    aria-label="Select gender"
-                    {...formik.getFieldProps("gender")}
-                    isValid={isValid(formik, "gender")}
-                    isInvalid={isInValid(formik, "gender")}
+                    aria-label="Select lesson"
+                    {...formik.getFieldProps("lessonId")}
+                    isValid={isValid(formik, "lessonId")}
+                    isInvalid={isInValid(formik, "lessonId")}
                   >
-                    <option>Select gender</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="MALE">Male</option>
+                    <option>Select lesson</option>
+                    {lessons.map( lesson=> <option key={lesson.id} value={lesson.id}>{lesson.label}</option>)}
+                    
                   </Form.Select>
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.gender}
+                    {formik.errors.lessonId}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Col>
               <Col>
-                <FloatingLabel
-                  controlId="birtdate"
-                  label="Birthdate"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="date"
-                    placeholder=""
-                    {...formik.getFieldProps("birthDay")}
-                    isValid={isValid(formik, "birthDay")}
-                    isInvalid={isInValid(formik, "birthDay")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.birthDay}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel
-                  controlId="placeofbirth"
-                  label="Place of birth"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    {...formik.getFieldProps("birthPlace")}
-                    isValid={isValid(formik, "birthPlace")}
-                    isInvalid={isInValid(formik, "birthPlace")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.birthPlace}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel controlId="phone" label="Phone (XXX-XXX-XXXX)" className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder="Phone (XXX-XXX-XXXX)"
-                    {...formik.getFieldProps("phoneNumber")}
-                    isValid={isValid(formik, "phoneNumber")}
-                    isInvalid={isInValid(formik, "phoneNumber")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.phoneNumber}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel controlId="email" label="Email" className="mb-3">
-                  <Form.Control
-                    type="email"
-                    placeholder=""
-                    {...formik.getFieldProps("email")}
-                    isValid={isValid(formik, "email")}
-                    isInvalid={isInValid(formik, "email")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.email}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel controlId="ssn" label="SSN (XXX-XX-XXXX)" className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder="SSN (XXX-XX-XXXX)"
-                    {...formik.getFieldProps("ssn")}
-                    isValid={isValid(formik, "ssn")}
-                    isInvalid={isInValid(formik, "ssn")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.ssn}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel 
-                controlId="fatherName" 
-                label="Father Name"
-                className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    {...formik.getFieldProps("fatherName")}
-                    isValid={isValid(formik, "fatherName")}
-                    isInvalid={isInValid(formik, "fatherName")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.fatherName}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel 
-                controlId="motherName" 
-                label="Mother Name"
-                className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    {...formik.getFieldProps("motherName")}
-                    isValid={isValid(formik, "motherName")}
-                    isInvalid={isInValid(formik, "motherName")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.motherName}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-              <FloatingLabel controlId="advisorTecher" label="Advisor Teacher" className="mb-3">
+                <FloatingLabel controlId="student" label="Student">
                   <Form.Select
-                    {...formik.getFieldProps("advisorTeacherId")}
-                    isValid={isValid(formik, "advisorTeacherId")}
-                    isInvalid={isInValid(formik, "advisorTeacherId")}
+                    aria-label="Select student"
+                    {...formik.getFieldProps("studentId")}
+                    isValid={isValid(formik, "studentId")}
+                    isInvalid={isInValid(formik, "studentId")}
                   >
-                     <option value="">Select Teacher</option>
-                     {advisorTeachers.map((item)=> (
-                      <option value={item.advisorTeacherId}>
-                        {item.teacherName} {item.teacherSurname}
-                      </option>
-                     ))}
-                    </Form.Select>
+                    <option>Select student</option>
+                    {students.map( student=> <option key={student.id} value={student.id}>{student.name} {student.surname}</option>)}
+                    
+                  </Form.Select>
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.advisorTeacherId}
+                    {formik.errors.studentId}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-              </Col>   
-              
+              </Col>
+              <Col>
+                <FloatingLabel controlId="term" label="Education Term">
+                  <Form.Select
+                    aria-label="Select term"
+                    {...formik.getFieldProps("educationTermId")}
+                    isValid={isValid(formik, "educationTermId")}
+                    isInvalid={isInValid(formik, "educationTermId")}
+                  >
+                    <option>Select term</option>
+                    {educationTerms.map( term=> <option key={term.id} value={term.id}>{term.term} {term.startDate}</option>)}
+                    
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.educationTermId}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
               <Col>
                 <FloatingLabel
-                  controlId="username"
-                  label="Username"
+                  controlId="absentee"
+                  label="Absentee"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="number"
+                    placeholder=""
+                    {...formik.getFieldProps("absentee")}
+                    isValid={isValid(formik, "absentee")}
+                    isInvalid={isInValid(formik, "absentee")}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.absentee}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel
+                  controlId="midtermExam"
+                  label="Midterm Exam"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="number"
+                    placeholder=""
+                    {...formik.getFieldProps("midtermExam")}
+                    isValid={isValid(formik, "midtermExam")}
+                    isInvalid={isInValid(formik, "midtermExam")}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.midtermExam}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col>
+                <FloatingLabel
+                  controlId="finalExam"
+                  label="Final Exam"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="number"
+                    placeholder=""
+                    {...formik.getFieldProps("finalExam")}
+                    isValid={isValid(formik, "finalExam")}
+                    isInvalid={isInValid(formik, "finalExam")}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.finalExam}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+              <Col xs={12}>
+                <FloatingLabel
+                  controlId="infoNote"
+                  label="Info"
                   className="mb-3"
                 >
                   <Form.Control
                     type="text"
                     placeholder=""
-                    {...formik.getFieldProps("username")}
-                    isValid={isValid(formik, "username")}
-                    isInvalid={isInValid(formik, "username")}
+                    {...formik.getFieldProps("infoNote")}
+                    isValid={isValid(formik, "infoNote")}
+                    isInvalid={isInValid(formik, "infoNote")}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.username}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel
-                  controlId="password"
-                  label="Password"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="password"
-                    placeholder=""
-                    {...formik.getFieldProps("password")}
-                    isValid={isValid(formik, "password")}
-                    isInvalid={isInValid(formik, "password")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Col>
-              <Col>
-                <FloatingLabel
-                  controlId="confirmPassword"
-                  label="Confirm Password"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="password"
-                    placeholder=""
-                    {...formik.getFieldProps("confirmPassword")}
-                    isValid={isValid(formik, "confirmPassword")}
-                    isInvalid={isInValid(formik, "confirmPassword")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.confirmPassword}
+                    {formik.errors.infoNote}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Col>
@@ -380,4 +267,5 @@ const NewStudentForm = () => {
     </Container>
   );
 };
-export default NewStudentForm;
+export default NewStudentInfoForm;
+

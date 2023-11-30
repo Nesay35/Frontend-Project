@@ -13,6 +13,14 @@ export const getStudentsByPage = async (page=0, size=20, sort="name", type="ASC"
   return data;
 };
 
+export const getAllStudents = async (id) => { 
+  const resp = await axios.get(`${baseURL}/students/getAll`, {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }
+
 export const deleteStudent = async (id) => { 
   const resp = await axios.delete(`${baseURL}/students/delete/${id}`, {
     headers: getAuthHeader(),
