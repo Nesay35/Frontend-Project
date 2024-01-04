@@ -5,7 +5,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
+import { setCurrentRecord, setListRefreshToken, setOperation } from "../../../store/slices/misc-slice";
 import { swalAlert, swalConfirm } from "../../../helpers/functions/swal";
 import { deleteStudentInfo, getStudentInfoByPage } from "../../../api/student-info-service";
 
@@ -53,8 +53,9 @@ const StudentInfoList = () => {
       setLoading(false);
     }
   }
-  const handleEdit = () => { 
-    
+  const handleEdit = (row) => { 
+    dispatch(setCurrentRecord(row));
+    dispatch(setOperation("edit"))
    }
   const getOperationButtons = (row) => {
     if (row.built_in) return null;

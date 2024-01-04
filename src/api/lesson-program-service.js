@@ -45,3 +45,11 @@ export const createLessonProgram = async (payload) => {
     return data;
    }
 
+   export const getAllLessonProgramsByTeacher = async () => { 
+    const resp = await axios.get(`${baseURL}/lessonPrograms/getAllLessonProgramsByTeacher`, {
+      headers: getAuthHeader(),
+    });
+    const data = await resp.data;
+    return data;
+   }
+

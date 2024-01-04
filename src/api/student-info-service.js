@@ -14,12 +14,21 @@ export const getStudentInfoByPage = async (page=0, size=20, sort="name", type="A
 };
 
 export const createStudentInfo = async (payload) => { 
-  const resp = await axios.post(`${baseURL}/studentInfo/save`, {
+  const resp = await axios.post(`${baseURL}/studentInfo/save`, payload,  {
     headers: getAuthHeader(),
   });
   const data = await resp.data;
   return data;
  }
+
+ export const updateStudentInfo = async (id,payload) => { 
+  const resp = await axios.put(`${baseURL}/studentInfo/update/${id}`, payload,  {
+    headers: getAuthHeader(),
+  });
+  const data = await resp.data;
+  return data;
+ }
+
 
 export const deleteStudentInfo = async (id) => { 
   const resp = await axios.delete(`${baseURL}/studentInfo/delete/${id}`, {

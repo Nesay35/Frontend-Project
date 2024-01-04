@@ -11,34 +11,29 @@ import {
 } from "react-bootstrap";
 import * as Yup from "yup";
 import { isInValid, isValid } from "../../../helpers/functions/forms";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setListRefreshToken,
   setOperation,
 } from "../../../store/slices/misc-slice";
 import { swalAlert } from "../../../helpers/functions/swal";
 import ButtonLoader from "../../common/button-loader";
-import { createStudentInfo } from "../../../api/student-info-service";
+import { updateStudentInfo } from "../../../api/student-info-service";
 import { getAllLessonProgramsByTeacher } from "../../../api/lesson-program-service";
 import { getAllStudents } from "../../../api/student-service";
 import { getAllEducationTerms } from "../../../api/education-term-service";
 
 
-const NewStudentInfoForm = () => {
+const EditStudentInfoForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [lessons, setLessons] = useState([]);
   const [students, setStudents] = useState([]);
   const [educationTerms, setEducationTerms] = useState([]);
+  const {currentRecord} = useSelector(state => state.misc);
   
   const initialValues = {
-    absentee: "",
-    educationTermId: "",
-    finalExam: "",
-    infoNote: "",
-    lessonId: "",
-    midtermExam: "",
-    studentId: "",
+    ...currentRecord
   };
   const validationSchema = Yup.object({
     absentee: Yup.number().required("Required"),
@@ -58,11 +53,11 @@ const NewStudentInfoForm = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      await createStudentInfo(values);
+      await updateStudentInfo(values);
       formik.resetForm();
       dispatch(setOperation(null));
       dispatch(setListRefreshToken(Math.random()));
-      swalAlert("Student info was created successfully", "success");
+      swalAlert("Student info was updated successfully", "success");
     } catch (err) {
       console.log(err);
       const errMsg = err.response.data.message;
@@ -120,7 +115,7 @@ const NewStudentInfoForm = () => {
     <Container>
       <Card>
         <Card.Body>
-          <Card.Title>New Student</Card.Title>
+          <Card.Title>Edit Student</Card.Title>
           <Form noValidate onSubmit={formik.handleSubmit}>
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3">
               <Col>
@@ -258,7 +253,7 @@ const NewStudentInfoForm = () => {
                   disabled={!(formik.dirty && formik.isValid) || loading}
                   className="ms-3"
                 >
-                  {loading && <ButtonLoader />} Create
+                  {loading && <ButtonLoader />} Update
                 </Button>
               </Col>
             </Row>
@@ -268,5 +263,5 @@ const NewStudentInfoForm = () => {
     </Container>
   );
 };
-export default NewStudentInfoForm;
+export default EditStudentInfoForm;
 
