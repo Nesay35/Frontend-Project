@@ -16,8 +16,8 @@ const StudentInfoManagementPage = () => {
     <>
         <PageHeader title="Student Info Management"/>
         <Spacer/>
-        {currentOperation==="new" && <><NewStudentInfoForm/><Spacer/></>}
-        {currentOperation==="edit" && <><EditStudentInfoForm/><Spacer/></>}
+        {currentOperation ==="new" && <><NewStudentInfoForm/><Spacer/></>}
+        {currentOperation ==="edit" && <><EditStudentInfoForm/><Spacer/></>}
         <StudentInfoList/>
         <Spacer/>
     </>

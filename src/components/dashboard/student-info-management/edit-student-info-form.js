@@ -26,15 +26,14 @@ import { getAllEducationTerms } from "../../../api/education-term-service";
 
 const EditStudentInfoForm = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [lessons, setLessons] = useState([]);
   const [students, setStudents] = useState([]);
   const [educationTerms, setEducationTerms] = useState([]);
   const {currentRecord} = useSelector(state => state.misc);
   
-  const initialValues = {
-    ...currentRecord
-  };
+  const initialValues = null;
+
   const validationSchema = Yup.object({
     absentee: Yup.number().required("Required"),
     educationTermId: Yup.number().required("Required"),
@@ -50,6 +49,8 @@ const EditStudentInfoForm = () => {
       .required("Required"),
     studentId: Yup.number().required("Required"),
   });
+
+
   const onSubmit = async (values) => {
     setLoading(true);
     try {
@@ -66,6 +67,7 @@ const EditStudentInfoForm = () => {
       setLoading(false);
     }
   };
+
   const handleCancel = () => {
     formik.resetForm();
     dispatch(setOperation(null));
@@ -74,6 +76,7 @@ const EditStudentInfoForm = () => {
     initialValues,
     validationSchema,
     onSubmit,
+    enableReinitialize:true
   });
   const loadLessons = async () => {
     try {
@@ -105,12 +108,30 @@ const EditStudentInfoForm = () => {
       console.log(err);
     }
   };
+  
+
+
   useEffect(() => {
     loadLessons();
     loadStudents();
     loadEducationTerms();
     // eslint-disable-next-line
   }, []);
+
+  useEffect( ()=> {
+    const payload = {
+      ...currentRecord,
+      studentId: currentRecord.studentResponse.userId
+    }
+    delete payload.studentResponse;
+
+    formik.setValues(payload);
+    setLoading(false)
+     // eslint-disable-next-line
+  }, [currentRecord]);
+
+  if(loading) return null;
+
   return (
     <Container>
       <Card>

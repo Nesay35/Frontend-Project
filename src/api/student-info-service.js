@@ -21,8 +21,8 @@ export const createStudentInfo = async (payload) => {
   return data;
  }
 
- export const updateStudentInfo = async (id,payload) => { 
-  const resp = await axios.put(`${baseURL}/studentInfo/update/${id}`, payload,  {
+ export const updateStudentInfo = async (payload) => { 
+  const resp = await axios.put(`${baseURL}/studentInfo/update/${payload.id}`, payload,  {
     headers: getAuthHeader(),
   });
   const data = await resp.data;
